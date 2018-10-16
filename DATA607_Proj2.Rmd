@@ -1,30 +1,139 @@
 ---
 title: "Data607_Proj2"
 author: "Alice Friedman"
-date: "10/14/2018"
-output: html_document
+date: "October 14, 2018"
+output:
+  prettydoc::html_pretty:
+    theme: leonids
+    highlight: vignette
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+##Setup
+```{r, results="hide", message=FALSE, warning=FALSE}
+library(knitr)
+library(kableExtra)
+library(prettydoc)
+library(RCurl)
+library(dplyr)
+library(ggplot2)
+library(forcats)
+library(varhandle)
+library(stringr)
 ```
 
-## Including Plots
+##Kaggle ML and Data Science Survey
 
-You can also embed plots, for example:
+Kaggle conducted a survey of more than 16,000 data scientists in 2017. Data used in the following analysis is pulled from https://www.kaggle.com/kaggle/kaggle-survey-2017.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+###At work, what proportion of your analytics projects incorporate data visualization?	
+One way to determine how important a particular skill is to data scientsists is to look at how much of working data scientists' job uses that skill. One question the survey asks is, "At work, what proportion of your analytics projects incorporate data visualization?"
+
+As the analysis shows below, the largest number of response by far is that more than three-quarters of all the respondents's assigned projects incorporate data visualization. Data visualization must be an imrportant skill!
+
+```{r}
+Kaggle.Multi <- read.csv("https://raw.githubusercontent.com/aliceafriedman/DATA607_Proj3/master/multipleChoiceResponses.csv", sep=",", header = TRUE)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+PercOrder <- c(
+"None",
+"10-25% of projects",
+"26-50% of projects",
+"51-75% of projects",
+"76-99% of projects",
+"100% of projects")
+
+Kaggle.Multi$WorkDataVisualizations <- factor(Kaggle.Multi$WorkDataVisualizations, PercOrder)
+
+Kaggle.Multi %>% 
+  filter(WorkDataVisualizations!="") %>%
+  mutate(WorkDataVisualizations = fct_recode(WorkDataVisualizations,
+    "10-25%" = "10-25% of projects",
+    "26-50%" = "26-50% of projects",
+    "51-75%" = "51-75% of projects",
+    "76-100%" = "76-99% of projects",
+    "76-100%" = "100% of projects"
+  )) %>% 
+  ggplot(aes(WorkDataVisualizations))+
+  geom_bar(aes(fill=WorkDataVisualizations))+
+  theme(axis.text.x=element_text(angle = 60, hjust = 1))+
+  labs(title = "At work, what proportion of your analytics projects\n incorportate data visualizations?",
+       x = "Percent of Projects Incorporating Visualization",
+       y = "Count")
+```
+
+
+###Who responded to this survey?
+
+```{r}
+Kaggle.Multi %>% 
+  filter(CurrentJobTitleSelect!="") %>%
+  mutate(CurrentJobTitleSelect = CurrentJobTitleSelect %>% fct_infreq() %>% fct_rev()) %>% 
+  ggplot(aes(fct_relevel(CurrentJobTitleSelect, "Other")))+
+  geom_bar(aes(fill=CurrentJobTitleSelect))+
+  theme(axis.text.x=element_text(angle = 60, hjust = 1), legend.position="none")+
+  labs(title = "Select the option that's most similar to your current job/professional \ntitle (or most recent title if retired)",
+       x= "Job Title",
+       y = "Count")
+```
+
+## Salary Data
+
+Another way to look at skills is to see how answers vary by salary. The most important skills should draw a higher salary.
+
+This data requires a bit of munging, as salaries have been reported in several currencies, and a quick look at the repsonses seems to indicate that many individuals have entered there salaries in "thousands" whereas others have entered it in dollars. Some of the responses are in the millions. Are these liars, or just very well paid survey respondents?
+
+To address the former, we will filter by responses reported in USD. To address the two latter, we have a options:
+
+1. Ignore outliers (e.g. responses less than \$1000, and more than \$1,000,000)
+
+2.  Assume that everyone is telling the truth about their salaries
+
+3.  Assume that responses less than \$1000 are reporting in thousands (e.g. a response of $87 is intended to mean a salary of \$87,000, something which would be expected based on overall salary data for data scientists)
+
+4. Some combination of the above, taking into account known salary distributions for particular titles.
+
+The data munging to access US reported salaries also must take into account that data has been entered in a varirty of formats, resulting in data that cannot be easily converted to numeric.
+
+First, let's investigate the data to see which of these options is most reasonable.
+
+```{r}
+USSalaries <- Kaggle.Multi %>% filter(CompensationCurrency=="USD") %>% 
+  select(CompensationAmount) %>% 
+#First, we must unfactor the data using the varhandle library
+  mutate(CompensationAmount = unfactor(CompensationAmount), 
+#Then, we must remove all commas, which are included in some, but not all, data entries before we can finally convert to numeric
+         CompensationAmount = str_remove_all(CompensationAmount,","),
+         CompensationAmount = as.numeric(CompensationAmount))
+quantile(USSalaries[[1]], na.rm = TRUE)
+ggplot(USSalaries, aes(y = USSalaries[[1]]))+geom_boxplot()
+```
+
+For the purpose of this analysis, I will choose option 4: Ignoring outliers, limiting the sample to titles with known salary ranges, and assuming that reported salaries of less than $1000 are intending to report true salaries in thousands of dollars per year.
+
+I will also convert the from factor to numeric, and then sort into bins.
+
+
+```{r}
+Kaggle.Multi %>% 
+  mutate(CompensationAmount = as.numeric(as.numeric(levels(CompensationAmount)[CompensationAmount])),
+         CompensationAmount = ifelse(CompensationAmount < 100, CompensationAmount*1000, CompensationAmount)) %>%  
+  filter(CompensationCurrency=="USD",
+         CompensationAmount < 1000000) %>%
+  glimpse()
+
+  #
+   # ggplot(aes(fct_relevel(CurrentJobTitleSelect, "Other")))+
+  #geom_bar(aes(fill=CurrentJobTitleSelect))+
+  #theme(axis.text.x=element_text(angle = 60, hjust = 1), legend.position="none")+
+  #labs(title = "Select the option that's most similar to your current job/professional \ntitle (or most recent title if retired)",
+ #      x= "Job Title",
+#       y = "Count")
+```
+
+## Job Satisfaction
+
