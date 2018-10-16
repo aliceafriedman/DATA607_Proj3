@@ -113,10 +113,34 @@ quantile(USSalaries[[1]], na.rm = TRUE)
 ggplot(USSalaries, aes(y = USSalaries[[1]]))+geom_boxplot()
 ```
 
-For the purpose of this analysis, I will choose option 4: Ignoring outliers, limiting the sample to titles with known salary ranges, and assuming that reported salaries of less than $1000 are intending to report true salaries in thousands of dollars per year.
+The entry "9999999" seems obviously to be a false entry, and a number of the other outliers seems implausible as well. How many reported salaries are more than \$1M?
 
-I will also convert the from factor to numeric, and then sort into bins.
+```{r}
+USSalariesTest <- USSalaries %>% filter(USSalaries > 1000000)
+USSalariesTest
+```
 
+Only 3! Seems plausible that 2 people out of more than 16,000 respondents could earn more than $1M, I will assume those are real entries. I will exclude the "9999999" entry, and rerun the results.
+
+```{r}
+USSalaries <- USSalaries %>% filter(USSalaries != 9999999)
+quantile(USSalaries[[1]], na.rm = TRUE)
+hist(USSalaries[[1]])
+```
+
+###How many people report less than $1000 in salary?
+```{r}
+USSalariesTest2 <- USSalaries %>% filter(USSalaries >0 & USSalaries < 1000)
+USSalariesTest2
+```
+
+Since the number of entries less than \$1000 is small (12), I will exclude them from the dataset rather than convert to thousands. 
+
+```{r}
+USSalaries <- USSalaries %>% filter(USSalaries < 9999999 & USSalaries > 0)
+quantile(USSalaries[[1]], c(.1, .2, .3, .4, .5, .6, .7, .8, .9), na.rm = TRUE)
+hist(USSalaries[[1]])
+```
 
 ```{r}
 Kaggle.Multi %>% 
