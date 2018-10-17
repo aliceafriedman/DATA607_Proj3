@@ -1,7 +1,7 @@
 ---
-title: "Data607_Proj2"
+title: "Data607_Proj3"
 author: "Alice Friedman"
-date: "October 14, 2018"
+date: "October 16, 2018"
 output:
   prettydoc::html_pretty:
     theme: leonids
@@ -23,6 +23,7 @@ library(ggplot2)
 library(forcats)
 library(varhandle)
 library(stringr)
+library(tidyr)
 ```
 
 ##Kaggle ML and Data Science Survey
@@ -69,11 +70,26 @@ Kaggle.Multi %>%
 
 ###What skills are evaluated in this survey?
 
-```{r}
+```{r results='hide'}
 levels(Kaggle.Multi$WorkDatasetsChallenge)
 ```
 
 ####How much time do you spend on the following types of tasks?
+One way to evaluate how much valuable different data science skills are is to determine how much time people spend using them.
+
+The following analysis shows that for the survey respondents as a whole, the most important skills are: 
+1. Gathering data
+
+2. Model building
+
+3. Visualizing data
+
+4. Finding insights
+
+5. Putting work into production
+
+While there are other responses, these represent 
+
 ```{r}
 timeSpent <- Kaggle.Multi %>% select(
   TimeGatheringData,
@@ -82,9 +98,10 @@ timeSpent <- Kaggle.Multi %>% select(
   TimeVisualizing,
   TimeFindingInsights,
   TimeOtherSelect) %>% 
-  gather() %>% glimpse()
+  summarize()
 
-
+#timeSpent %>% ggplot(aes(x=key, y=value, fill=key))+ geom_col()
+#Note: Need to redo this one.
 
 ```
 
