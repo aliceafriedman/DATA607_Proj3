@@ -1,0 +1,156 @@
+---
+title: 'Data Science Skills: Custom Survey Results'
+author: "Jeff Littlejohn"
+date: "October 17, 2018"
+---
+
+In addition to examining the data and trends discussed in the article and doing our own analysis of the Kaggle data science skills survey results, we wanted to create our own survey looking at company needs. First, this was an excellent opportunity to learn more about designing and administering a survey in addition to wrangling and analyzing the results. Second, it allowed us to reach out and establish contacts at some companies at which we might want to work as data scientists. 
+
+We sent out the survey to at least 15 different contacts. We attempted to target data science leads or leaders with a good grasp of how their team hires and grows. As of 10/17/18, we have only received six responses. Obviously, it was a targeted survey that received only a few responses and cannot be claimed to be representative to the overall industry. Still, it was a worthwhile and educational endeavor. 
+
+We worked as a team to develop a set of survey questions, listed below. We then configured these questions to be administered via a free account on Survey Monkey. That free account does not include any export functionality, let alone API connectivity, so results were compiled manually in a tidy-ish format in a csv file.
+
+```{r message= FALSE}
+#load requisite packages
+library(tidyverse)
+library(knitr)
+library(dplyr)
+library(stringr)
+```
+
+
+```{r}
+#load the csv into R
+df_dfs <- tbl_df(read.csv("https://raw.githubusercontent.com/littlejohnjeff/DATA607_Project3/master/Data%20Science%20Skills%20Survey%20Monkey%20Responses_20181017.csv"))
+#Display all six responses to our eight questions
+kable(df_dfs)
+```
+
+Who did we survey? We don't have statistics on this, but our responses likely came from smaller companies with smaller than average data science teams.
+```{r}
+#limit data to question 1; drop levels removes unused factors - which are responses to to other questions - will be important later
+team_size <- df_dfs %>% filter(df_dfs$Question.No. == 1) %>% droplevels()
+ggplot(team_size,aes(x=Answer),na.rm = TRUE) + geom_bar() + theme_light()
+```
+
+So all our responses came from organizations with more than a couple but no more than 10 team members. Based on the way we created our survey result data, possible answers to questions that were not selected by any users are not included in the csv and therefore are not included in the dataframe or resulting visualization. For data science team size, this does not really matter. We know there are teams larger than 10, but none of those responded to the survey. For other questions, such as questions asking to pick the top three most important skills from a list of skills, the options that received no responses are important.
+
+```{r}
+#Summarize the responses, including a list of levels with the factor for answers for this question
+team_size$Answer
+```
+
+We want to add back the possible answers that did not receive responses. There is surely a better way to structure survey response data in R using one the survey-oriented packages, but don't call us Shirley. We'll display the code for adding the unused possible answers as factors here as a separate chunk of code. For later question responses, we will include this step right after subsetting.
+```{r}
+#add unused answers
+levels(team_size$Answer) <- c(levels(team_size$Answer),"1-2","11-20","21+")
+#check that the desired levels were added
+levels(team_size$Answer) 
+
+```
+
+Now let's regraph the responses, adding some (slight) aesthetic touches, along with the answer choices that were not selected. As the data science team sizes indicate, we mostly reached out to (and heard back from) smaller teams.
+```{r}
+#create an order to show the factors in logical manner
+positions <- c('1-2', "3-5", '6-10', '11-20', '21+')
+#including anbswers wi
+ggplot(team_size,aes(x=Answer)) + geom_bar() + theme_light() + scale_fill_discrete(drop=FALSE) + scale_x_discrete(drop=FALSE, limits = positions) + labs(x = "Data Science Team Size",y="")
+
+```
+  
+
+
+```{r}
+#limit data to question 2; drop levels removes unused factors - which are responses to to other questions - will be important later
+team_roles <- df_dfs %>% filter(df_dfs$Question.No. == 2) %>% droplevels()
+#add unused answers
+levels(team_roles$Answer) <- c(levels(team_roles$Answer),"Other")
+#create an order to show the factors in logical manner
+positions2 <- c('No, everyone is versatile', "Kinda, some people are better at things than others and we utilize our strengths", 'Yes, some of our team members specialize in data engineering and others in data science',"Other")
+#including answers with no respones and adjusting axis in a few ways 
+ggplot(team_roles,aes(x=Answer)) + geom_bar() + theme_light() + scale_fill_discrete(drop=FALSE) + scale_x_discrete(drop=FALSE, limits = positions2, labels = function(x) str_wrap(str_replace_all(x, "foo" , " "),width = 20)) + labs(x = "Are data science roles on your team differentiated?",y="") + theme(axis.text.x = element_text(angle=45, hjust=1)) + theme(legend.position = "bottom")
+``` 
+
+Even on the smaller data science teams from which we received responses, the majority of teams used members in different ways. This is somewhat encouraging. Data science job listings tend to list an impossible number of skills that they seemingly expected qualified applicants to have. Our responses, though paltry in number, suggest we might be able to start contributing to a team without mastering everything. A "kinda" team might be a great opportunity to get build some cool stuff using our strengths while also filling in skills gaps.
+
+
+Now let's look at responses related to where data science "lives" within an organization. At some companies, data scientists work together on a centralized team that attemps to solve the problems of business units or clients. In other firms, data scientists might work within an operational or other division and have a "dotted line" reporting relationship to a data science or analytics leader. They may have weekly or other iterative collaborations with the other data scientists at their company, but they might work more with the business users or analysts within their data domain.
+```{r}
+#limit data to question 3; drop levels removes unused factors - which are responses to to other questions - will be important later
+team_location <- df_dfs %>% filter(df_dfs$Question.No. == 3) %>% droplevels()
+#including answers with no respones and adjusting axis in a few ways 
+ggplot(team_location,aes(x=Answer)) + geom_bar() + theme_light() + scale_fill_discrete(drop=FALSE) + scale_x_discrete(drop=FALSE, labels = function(x) str_wrap(str_replace_all(x, "foo" , " "),width = 20)) + labs(x = "Where are data scientists positionined in your organization?",y="") + theme(axis.text.x = element_text(angle=45, hjust=1)) + theme(legend.position = "bottom")
+``` 
+  
+As is clearly evident, our responses were evenly split between central and deployed data science teams.  
+
+Next, we were curious about data science teams' plans for growth. Again, selfishly, we particulary targetted companies at which we may want to work as data scientists, so these were especially interesting repsonses.  
+
+```{r}
+#limit data to question 4; drop levels removes unused factors - which are responses to to other questions - will be important later
+team_growth <- df_dfs %>% filter(df_dfs$Question.No. == 4) %>% droplevels()
+#add unused answers
+levels(team_growth$Answer) <- c(levels(team_growth$Answer),"No growth - or negative growth","More than double")
+#create an order to show the factors in logical manner
+positions4 <- c("No growth - or negative growth", "1-25%",'25-50%',"50-100%","More than double")
+#including answers with no respones and adjusting axis in a few ways 
+ggplot(team_growth,aes(x=Answer)) + geom_bar() + theme_light() + scale_fill_discrete(drop=FALSE) + scale_x_discrete(drop=FALSE, limits = positions4, labels = function(x) str_wrap(str_replace_all(x, "foo" , " "),width = 20)) + labs(x = "What kind of team growth do you anticipate in the next 2 years?",y="") + theme(axis.text.x = element_text(angle=45, hjust=1)) 
+``` 
+
+All teams expect to grow, though none of the respondents expect to more than double. Encouraging, but the wild days of data scientist job growth might be slowing.  
+
+
+Perhaps most importantly, what skills are employers looking for in hiring data scientists? We asked team leaders to pick their top three.
+```{r}
+#limit data to question 5; drop levels removes unused factors - which are responses to to other questions - will be important later
+team_skills <- df_dfs %>% filter(df_dfs$Question.No. == 5) %>% droplevels()
+#add unused answers
+levels(team_skills$Answer) <- c(levels(team_skills$Answer),"R","Java","Data wrangling", "Unstructured data", "Natural language processing", "Optimization", "Graphical models", "Privacy and ethics", "Other soft skills", "Other (please specify)")
+#create an order to show the factors in logical manner
+positions5 <- c("Data wrangling", "Graphical models", "Hadoop;Map/Reduce", "Java", "Machine learning", "Natural language processing", "Optimization","Other (please specify)", "Other soft skills", "Presentation skills", "Privacy and ethics", "Project management", "Python", "R",  "Research design", "SQL", "Statistical modeling", "Unstructured data")
+#including answers with no respones and adjusting axis in a few ways 
+ggplot(team_skills,aes(x=Answer)) + geom_bar() + theme_light() + scale_fill_discrete(drop=FALSE) + scale_x_discrete(drop=FALSE, limits = positions5, labels = function(x) str_wrap(str_replace_all(x, "foo" , " "),width = 20)) + labs(x = "What top 3 skills do you look for in a new applicant?",y="") + theme(axis.text.x = element_text(angle=45, hjust=1)) 
+``` 
+
+Machine learning and statistical moedling were both picked by half of the six respondents, along with the (relatively) soft skills of project management. Many of us have project management experience from our pre-data science careers, so that's heartening. We take note of Python being picked by two respondents, with R going unpicked.
+
+On the same topic, we asked what skills is hardest to find among applicants? 
+```{r}
+#limit data to question 6; drop levels removes unused factors - which are responses to to other questions - will be important later
+team_skill2 <- df_dfs %>% filter(df_dfs$Question.No. == 6) %>% droplevels()
+#add unused answers
+levels(team_skill2$Answer) <- c(levels(team_skill2$Answer),"R","Java","Data wrangling", "Unstructured data", "Natural language processing", "Optimization", "Graphical models", "Privacy and ethics", "Other soft skills", "Other (please specify)")
+#create an order to show the factors in logical manner 
+positions6 <- c("Ability to apply skills to practical problems","Data wrangling", "Graphical models", "Hadoop;Map/Reduce", "Java", "Machine learning", "Natural language processing", "Optimization","Other (please specify)", "Other soft skills", "Presentation skills", "Privacy and ethics", "Project management", "Python", "R",  "Research design", "SQL", "Statistical modeling", "Unstructured data")
+#including answers with no respones and adjusting axis in a few ways 
+ggplot(team_skill2,aes(x=Answer)) + geom_bar() + theme_light() + scale_fill_discrete(drop=FALSE) + scale_x_discrete(drop=FALSE, limits = positions6, labels = function(x) str_wrap(str_replace_all(x, "foo" , " "),width = 30)) + labs(x = "Which skill is hardest to find in applicants?",y="") + theme(axis.text.x = element_text(angle=45, hjust=1)) 
+``` 
+
+No two respondents chose the same skill! Interesting that four of the six responses are non-technical.
+
+We also added a related question - what skill is most associated with advancement on your team? 
+```{r}
+#limit data to question ;7 drop levels removes unused factors - which are responses to to other questions - will be important later
+team_skill3 <- df_dfs %>% filter(df_dfs$Question.No. == 7) %>% droplevels()
+#add unused answers
+levels(team_skill3$Answer) <- c(levels(team_skill3$Answer),"R","Java","Data wrangling", "Unstructured data", "Natural language processing", "Optimization", "Graphical models", "Privacy and ethics", "Other soft skills", "Other (please specify)")
+#including answers with no respones and adjusting axis in a few ways 
+#reusing position vector from 6
+ggplot(team_skill3,aes(x=Answer)) + geom_bar() + theme_light() + scale_fill_discrete(drop=FALSE) + scale_x_discrete(drop=FALSE, limits = positions6, labels = function(x) str_wrap(str_replace_all(x, "foo" , " "),width = 30)) + labs(x = "Which skill is most associated with advancment within your team?",y="") + theme(axis.text.x = element_text(angle=45, hjust=1)) 
+``` 
+
+Machine learning showed up yet again with multiple selections. Soft skills are heavily represented as well, echoing industry feedback that project management and presentation skills are just as essential to success as technical competency.  
+
+Finally, if teams hire junior (or relatively entry level data scientists), what is the average starting salary?
+```{r}
+#limit data to question 8 drop levels removes unused factors - which are responses to to other questions - will be important later
+team_salary <- df_dfs %>% filter(df_dfs$Question.No. == 8) %>% droplevels()
+#add unused answers
+levels(team_salary$Answer) <- c(levels(team_salary$Answer),"Less than $50,000", "$125,000+")
+#create an order to show the factors in logical manner 
+positions8 <- c("Less than $50,000","$50,000-74,999","$75,000-99,999","$100,000-124,999","$125,000+")
+#including answers with no respones and adjusting axis in a few ways 
+ggplot(team_salary,aes(x=Answer)) + geom_bar() + theme_light() + scale_fill_discrete(drop=FALSE) + scale_x_discrete(drop=FALSE, limits = positions8, labels = function(x) str_wrap(str_replace_all(x, "foo" , " "),width = 30)) + labs(x = "What is the average pay rate for junior data scientists?",y="") + theme(axis.text.x = element_text(angle=45, hjust=1)) 
+``` 
+
+This is in line with what we'd expect given other industry data.
