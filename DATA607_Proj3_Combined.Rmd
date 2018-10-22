@@ -8,6 +8,7 @@ output:
     toc: true
     toc_depth: 2
     toc_float: true
+    number_sections: true
 
 ---
 
@@ -17,22 +18,22 @@ knitr::opts_chunk$set(echo = TRUE, error = TRUE)
 
 #Introduction
 
-An October 2012 Harvard Business Review [article](https://hbr.org/2012/10/data-scientist-the-sexiest-job-of-the-21st-century) called Data Scientist the "sexiest job of the 21st century." In 21st-century time, 2012 is eons ago. Glassdoor, the popular career and company review site, has [named](https://www.kdnuggets.com/2018/01/glassdoor-data-scientist-best-job-america-3years.html) Data Scientist the best job in America for three years running. We hear tales of huge starting salaries and high demand for talent. Still, for a number of reasons, we're cautious.
+An October 2012 Harvard Business Review <a href="https://hbr.org/2012/10/data-scientist-the-sexiest-job-of-the-21st-century" target="_blank">article</a> called Data Scientist the "sexiest job of the 21st century." In 21st-century time, 2012 is eons ago. Glassdoor, the popular career and company review site, has <a href="https://www.kdnuggets.com/2018/01/glassdoor-data-scientist-best-job-america-3years.html" target="_blank">named</a> Data Scientist the best job in America for three years running. We hear tales of huge starting salaries and high demand for talent. Still, for a number of reasons, we're cautious.
 
 ![Sexy Job Time](sexy_data_scientist.png)
 
 First, data scientist jobs are prone to the catch-22 prevalent in many industries - all jobs seem to want a couple years of experience in the field. How do you get experience if there are no seemingly true entry-level jobs?
 
-Second, data science degree programs and boot camps are popping up faster the Chick-fil-A franchises. Berkeley's brand-new undergraduate Data Science program [received](https://data.berkeley.edu/news/uc-berkeleys-data-science-major-takes) nearly 800 major pre-declarations as soon as it was made available, which is unprecedented for a new academic program. (They have to use a giant lecture hall (below) for the first course in the sequence.) Competition for entry-level positions is already competitive and growing. It's going to get crazier.
+Second, data science degree programs and boot camps are popping up faster the Chick-fil-A franchises. Berkeley's brand-new undergraduate Data Science program <a href="https://data.berkeley.edu/news/uc-berkeleys-data-science-major-takes" target="_blank">received</a> nearly 800 major pre-declarations as soon as it was made available, which is unprecedented for a new academic program. (They have to use a giant lecture hall (below) for the first course in the sequence.) Competition for entry-level positions is already competitive and growing. It's going to get crazier.
 ![Big Classroom](data8-fall2018_0.jpg)
 
 Also, job listings have not evolved to reflect the growth in data science-specific graduate programs. Many open positions list wanting graduate degrees in statistics or specific areas of computer science or PhD degrees in quantitative areas, echoing the backgrounds of many early Data Science industry leaders. In larger companies, our resumes may not make it past HR to the hiring managers. 
 
 Finally, many of us are older students who already have good careers and have family obligations and outside lives. We're very interested in data science, but we seek interesting, rewarding work that allows for balance. Our exploration will touch on this.
 
-In short, as first or second semester students in a M.S. in Data Science program, we want to ensure we're learning the skills future employers want and that we know how to demonstrate those abilities in projects and portfolios. While some of us might just apply the skills we learn in the pprogram to our current jobs, we want to have options.
+In short, as first or second semester students in a M.S. in Data Science program, we want to ensure we're learning the skills future employers want and that we know how to demonstrate those abilities in projects and portfolios. While some of us might just apply the skills we learn in the program to our current jobs, we want to have options.
 
-To further our understanding of the needed skills - and fulfill the requirements of this project - we looked at three different sets of data related to data science skills. We start with a discussion of the results of a recent look at data science job listings. Next, two members of our team sliced and diced data from a large survey of data scientists gathered by [Kaggle](https://www.kaggle.com/), the machine learning contest and education site. Their analysis is shared. Finally, we built our own survey using a free online tool and elicited responses from data science leaders at companies at which we are interested in eventually seeking employment. Results of that survey are analyzed.
+To further our understanding of the needed skills - and fulfill the requirements of this project - we looked at three different sets of data related to data science skills. We start with a discussion of the results of a recent look at data science job listings. Next, two members of our team sliced and diced data from a large survey of data scientists gathered by <a href="https://www.kaggle.com/" target="_blank">Kaggle</a>, the machine learning contest and education site. Their analysis is shared. Finally, we built our own survey using a free online tool and elicited responses from data science leaders at companies at which we are interested in eventually seeking employment. Results of that survey are analyzed.
 
 \pagebreak
 
@@ -62,7 +63,7 @@ library(plotly)
 
 #Kaggle ML and Data Science Survey
 
-Kaggle conducted a survey of more than 16,000 data scientists in 2017. Data used in the following analysis is pulled from https://www.kaggle.com/kaggle/kaggle-survey-2017.
+Kaggle conducted a survey of more than 16,000 data scientists in 2017. Data used in the following analysis is pulled from <a href="https://www.kaggle.com/kaggle/kaggle-survey-2017" target="_blank">https://www.kaggle.com/kaggle/kaggle-survey-2017</a>.
 
 ```{r}
 Kaggle.Multi <- read.csv("https://raw.githubusercontent.com/aliceafriedman/DATA607_Proj3/master/multipleChoiceResponses.csv", sep=",", header = TRUE)
@@ -112,7 +113,7 @@ timeSpent %>%
 
 Along with the multiple choice question survey, the respondents were also given an option of submitting other as an option and an open text box where they could type any text in case they selected other. For example, for the question regarding: where do the respondents spend their time. There were multiple options in this - Gathering Data, Model Building, Production, Visualizing, Finding Insights and Other. In the other option, there was an open text box where they filled the relevant information.
 
-We checked for some relevant data in the free user form response in a coupld of fileds like - Job title using data science (CurrentJobTitleFreeForm) and time the respondents spent under the other option (TimeOtherSelectFreeForm
+We checked for some relevant data in the free user form response in a couple of fields like - Job title using data science (CurrentJobTitleFreeForm) and time the respondents spent under the other option (TimeOtherSelectFreeForm
 ). We did some analysis below around this free form data set - freeformResponses.csv
 
 ```{r}
@@ -125,7 +126,7 @@ dim(free.form.response.df2)
 apply(free.form.response.df2, 2, function(x){sum(!(x == ""), na.rm = TRUE)})
 ```
 
-Digging further into the free form response data set to get more insights. By digging and analyzing further, we could see some of the common texts being used in the 2 relevant coulumns - time spent (other) and job title (other). But most of them are random values, so we can at least show some data trends in these 2 other columns which are relevant here.
+Digging further into the free form response data set to get more insights. By digging and analyzing further, we could see some of the common texts being used in the 2 relevant columns - time spent (other) and job title (other). But most of them are random values, so we can at least show some data trends in these 2 other columns which are relevant here.
 
 ```{r, echo=FALSE}
 # Creating vectors
@@ -219,12 +220,12 @@ kable(df_other_time_spent)
 
 
 ##At work, what proportion of your analytics projects incorporate data visualization?	
-Another way to determine how important a particular skill is to data scientsists is to look at how much of working data scientists' job uses that skill. One question the survey asks is, "At work, what proportion of your analytics projects incorporate data visualization?"
+Another way to determine how important a particular skill is to data scientists is to look at how much of working data scientists' job uses that skill. One question the survey asks is, "At work, what proportion of your analytics projects incorporate data visualization?"
 
-As the analysis shows below, the largest number of response by far is that more than three-quarters of all the respondents's assigned projects incorporate data visualization. Although the median response is that only 10\% of time is spent on this skill, data visualization must be an imrportant skill nonetheless!
+As the analysis shows below, the largest number of response by far is that more than three-quarters of all the respondents's assigned projects incorporate data visualization. Although the median response is that only 10\% of time is spent on this skill, data visualization must be an important skill nonetheless!
 
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 PercOrder <- c(
 "None",
 "10-25% of projects",
@@ -245,7 +246,7 @@ Kaggle.Multi %>%
   ggplot(aes(WorkDataVisualizations))+
   geom_bar(aes(fill=WorkDataVisualizations))+
   theme(axis.text.x=element_text(angle = 60, hjust = 1))+
-  labs(title = "At work, what proportion of your analytics projects\n incorportate data visualizations?",
+  labs(title = "At work, what proportion of your analytics projects\n incorporate data visualizations?",
        x = "Percent of Projects Incorporating Visualization",
        y = "Count")
 ```
@@ -253,7 +254,7 @@ Kaggle.Multi %>%
 ##Who responded to this survey?
 
 ###Job Title
-```{r}
+```{r, message=FALSE, warning=FALSE}
 Kaggle.Multi %>% 
   filter(CurrentJobTitleSelect!="") %>%
   mutate(CurrentJobTitleSelect = CurrentJobTitleSelect %>% fct_infreq() %>% fct_rev()) %>% 
@@ -374,7 +375,7 @@ We could figure out how the 59 % of responses in the CurrentJobTitleFreeForm for
 
 ###Salary Data
 
-This data requires a bit of munging, as salaries have been reported in several currencies, and a quick look at the repsonses seems to indicate that many individuals have entered there salaries in "thousands" whereas others have entered it in dollars. Some of the responses are in the millions. Are these liars, or just very well paid survey respondents?
+This data requires a bit of munging, as salaries have been reported in several currencies, and a quick look at the responses seems to indicate that many individuals have entered there salaries in "thousands" whereas others have entered it in dollars. Some of the responses are in the millions. Are these liars, or just very well paid survey respondents?
 
 To address the former, we will filter by responses reported in USD. To address the two latter, we have a options:
 
@@ -386,11 +387,11 @@ To address the former, we will filter by responses reported in USD. To address t
 
 4. Some combination of the above, taking into account known salary distributions for particular titles.
 
-The data munging to access US reported salaries also must take into account that data has been entered in a varirty of formats, resulting in data that cannot be easily converted to numeric.
+The data munging to access US reported salaries also must take into account that data has been entered in a variety of formats, resulting in data that cannot be easily converted to numeric.
 
 First, let's investigate the data to see which of these options is most reasonable.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 USSalaries <- Kaggle.Multi %>% filter(CompensationCurrency=="USD") %>% 
   select(CompensationAmount) %>% 
 #First, we must unfactor the data using the varhandle library
@@ -479,7 +480,7 @@ timeSpentByUSDSalary%>%
   kable_styling(bootstrap_options = "responsive")
 ```
 
-These results are remarkably consistent across the income levels, althought the lowest earners seem to spend less time gathering data than other groups.
+These results are remarkably consistent across the income levels, although the lowest earners seem to spend less time gathering data than other groups.
   
 
 ##Job Skills by Job Satisfaction
@@ -539,9 +540,9 @@ Interestingly, the least satisfied workers also seems to spend the most time gat
 
 In addition to examining the data and trends discussed in the article and doing our own analysis of the Kaggle data science skills survey results, we wanted to create our own survey looking at company needs. This was an excellent opportunity to learn more about designing and administering a survey in addition to wrangling and analyzing the results. Also, it allowed us to reach out and establish contacts at some companies at which we might want to work as data scientists. 
 
-We sent out the survey to at least 15 different contacts. We attempted to target data science leads or leaders with a good grasp of how their team hires and grows. As of 10/17/18, we have only received six responses. Obviously, it was a targeted survey that received only a few responses and cannot be claimed[ to be representative to the overall industry. Still, it was a worthwhile and educational endeavor. (You can help us out and take the survey [here](https://www.surveymonkey.co.uk/r/2GZWJQ6). It will only take a couple minutes.)
+We sent out the survey to at least 15 different contacts. We attempted to target data science leads or leaders with a good grasp of how their team hires and grows. As of 10/17/18, we have only received six responses. Obviously, it was a targeted survey that received only a few responses and cannot be claimed[ to be representative to the overall industry. Still, it was a worthwhile and educational endeavor. (You can take the survey <a href="https://www.surveymonkey.co.uk/r/2GZWJQ6" target="_blank">here</a>.)
 
-We work[ed as a team to develop a set of survey questions, listed below. We then configured these questions to be administered via a free account on [Survey Monkey](https://www.surveymonkey.com/). That free account does not include any export functionality, let alone API connectivity, so results were compiled manually in a tidy-ish format in a csv file.
+We worked as a team to develop a set of survey questions, listed below. We then configured these questions to be administered via a free account on <a href="https://www.surveymonkey.com/" target="_blank">Survey Monkey</a>. That free account does not include any export functionality, let alone API connectivity, so results were compiled manually in a tidy-ish format in a csv file.
 
 ```{r}
 #load the csv into R
@@ -581,7 +582,7 @@ Now let's re-graph the responses, adding some (slight) aesthetic touches, along 
 ```{r}
 #create an order to show the factors in logical manner
 positions <- c('1-2', "3-5", '6-10', '11-20', '21+')
-#including anbswers wi
+#including answers with no responses
 ggplot(team_size,aes(x=Answer)) + geom_bar(aes(fill=Answer)) + theme_light() + scale_fill_discrete(drop=FALSE) + scale_x_discrete(drop=FALSE, limits = positions) + labs(x = "Data Science Team Size",y="Count")
 ```
   
@@ -594,7 +595,7 @@ team_roles <- df_dfs %>% filter(df_dfs$Question.No. == 2) %>% droplevels()
 levels(team_roles$Answer) <- c(levels(team_roles$Answer),"Other")
 #create an order to show the factors in logical manner
 positions2 <- c('No, everyone is versatile', "Kinda, some people are better at things than others and we utilize our strengths", 'Yes, some of our team members specialize in data engineering and others in data science',"Other")
-#including answers with no respones and adjusting axis in a few ways 
+#including answers with no resposnes and adjusting axis in a few ways 
 ggplot(team_roles,aes(x=Answer)) + geom_bar(aes(fill = Answer)) + theme_light() + scale_fill_discrete(drop=FALSE) + scale_x_discrete(drop=FALSE, limits = positions2, labels = function(x) str_wrap(str_replace_all(x, "foo" , " "),width = 20)) + labs(x = "Are data science roles on your team differentiated?",y="") + theme(axis.text.x = element_text(angle=45, hjust=1)) + theme(legend.position = "bottom")
 team_roles %>% mutate(team.role.segregation = ifelse(Answer == "Kinda, some people are better at things than others and we utilize our strengths" | Answer == "Yes, some of our team members specialize in data engineering and others in data science", "Specialized roles", "versatile")) %>%
   ggplot(aes(team.role.segregation)) + 
@@ -609,7 +610,7 @@ Now let's look at responses related to where data science "lives" within an orga
 ```{r}
 #limit data to question 3; drop levels removes unused factors - which are responses to to other questions - will be important later
 team_location <- df_dfs %>% filter(df_dfs$Question.No. == 3) %>% droplevels()
-#including answers with no respones and adjusting axis in a few ways 
+#including answers with no responses and adjusting axis in a few ways 
 team_location %>%
   ggplot(aes(Answer)) + 
   geom_dotplot(aes(fill = Answer), binwidth = 0.5, dotsize = 1) + labs(title = "Data Science team location in the organization") + theme(axis.text.x=element_text(angle = 60, hjust = 1), axis.text.y = element_blank(), axis.title.x = element_blank()) + 
@@ -629,7 +630,7 @@ team_growth <- df_dfs %>% filter(df_dfs$Question.No. == 4) %>% droplevels()
 levels(team_growth$Answer) <- c(levels(team_growth$Answer),"No growth - or negative growth","More than double")
 #create an order to show the factors in logical manner
 positions4 <- c("No growth - or negative growth", "1-25%",'25-50%',"50-100%","More than double")
-#including answers with no respones and adjusting axis in a few ways 
+#including answers with no responses and adjusting axis in a few ways 
 ggplot(team_growth,aes(x=Answer)) + geom_bar(aes(fill = Answer)) + theme_light() + scale_fill_discrete(drop=FALSE) + scale_x_discrete(drop=FALSE, limits = positions4, labels = function(x) str_wrap(str_replace_all(x, "foo" , " "),width = 20)) + labs(x = "What kind of team growth do you anticipate in the next 2 years?",y="", title = "Expected Growth of existing data science teams in the next 2 years") + theme(axis.text.x = element_text(angle=45, hjust=1)) 
 ``` 
 
@@ -645,7 +646,7 @@ team_skills <- df_dfs %>% filter(df_dfs$Question.No. == 5) %>% droplevels()
 levels(team_skills$Answer) <- c(levels(team_skills$Answer),"R","Java","Data wrangling", "Unstructured data", "Natural language processing", "Optimization", "Graphical models", "Privacy and ethics", "Other soft skills", "Other (please specify)")
 #create an order to show the factors in logical manner
 positions5 <- c("Data wrangling", "Graphical models", "Hadoop;Map/Reduce", "Java", "Machine learning", "Natural language processing", "Optimization","Other (please specify)", "Other soft skills", "Presentation skills", "Privacy and ethics", "Project management", "Python", "R",  "Research design", "SQL", "Statistical modeling", "Unstructured data")
-#including answers with no respones and adjusting axis in a few ways 
+#including answers with no responses and adjusting axis in a few ways 
 team_skills %>% within(Answer <- factor(Answer, levels = names(sort(table(Answer), decreasing = TRUE)))) %>% ggplot(aes(x=Answer)) + geom_bar(aes(fill = Answer)) + theme(axis.text.x = element_text(angle=45, hjust=1)) + labs(title = "Top wanted skills")
 ``` 
 
@@ -661,7 +662,7 @@ team_skill2 <- df_dfs %>% filter(df_dfs$Question.No. == 6) %>% droplevels()
 levels(team_skill2$Answer) <- c(levels(team_skill2$Answer),"R","Java","Data wrangling", "Unstructured data", "Natural language processing", "Optimization", "Graphical models", "Privacy and ethics", "Other soft skills", "Other (please specify)")
 #create an order to show the factors in logical manner 
 positions6 <- c("Ability to apply skills to practical problems","Data wrangling", "Graphical models", "Hadoop;Map/Reduce", "Java", "Machine learning", "Natural language processing", "Optimization","Other (please specify)", "Other soft skills", "Presentation skills", "Privacy and ethics", "Project management", "Python", "R",  "Research design", "SQL", "Statistical modeling", "Unstructured data")
-#including answers with no respones and adjusting axis in a few ways 
+#including answers with no responses and adjusting axis in a few ways 
 team_skill2 %>% within(Answer <- factor(Answer, levels = names(sort(table(Answer), decreasing = TRUE)))) %>% ggplot(aes(x=Answer)) + geom_bar(aes(fill = Answer)) + theme(axis.text.x = element_text(angle=90, hjust=1), axis.title.x = element_blank()) +  labs(title = "Hardest to find skills")
 ``` 
 
@@ -675,7 +676,7 @@ We also added a related question - what skill is most associated with advancemen
 team_skill3 <- df_dfs %>% filter(df_dfs$Question.No. == 7) %>% droplevels()
 #add unused answers
 levels(team_skill3$Answer) <- c(levels(team_skill3$Answer),"R","Java","Data wrangling", "Unstructured data", "Natural language processing", "Optimization", "Graphical models", "Privacy and ethics", "Other soft skills", "Other (please specify)")
-#including answers with no respones and adjusting axis in a few ways 
+#including answers with no responses and adjusting axis in a few ways 
 #reusing position vector from 6
 team_skill3 %>% within(Answer <- factor(Answer, levels = names(sort(table(Answer), decreasing = TRUE)))) %>% ggplot(aes(x=Answer)) + geom_bar(aes(fill = Answer)) + theme(axis.text.x = element_text(angle=90, hjust=1), axis.title.x = element_blank()) +  labs(title = "Skills associated most with advancement") +
   scale_fill_discrete(drop=FALSE) + scale_x_discrete(drop=FALSE, limits = positions6, labels = function(x) str_wrap(str_replace_all(x, "foo" , " "),width = 30)) 
@@ -693,7 +694,7 @@ team_salary <- df_dfs %>% filter(df_dfs$Question.No. == 8) %>% droplevels()
 levels(team_salary$Answer) <- c(levels(team_salary$Answer),"Less than $50,000", "$125,000+")
 #create an order to show the factors in logical manner 
 positions8 <- c("Less than $50,000","$50,000-74,999","$75,000-99,999","$100,000-124,999","$125,000+")
-#including answers with no respones and adjusting axis in a few ways 
+#including answers with no responses and adjusting axis in a few ways 
 ggplot(team_salary,aes(x=Answer)) + geom_bar(aes(fill = Answer)) + theme_light() + scale_fill_discrete(drop=FALSE) + scale_x_discrete(drop=FALSE, limits = positions8, labels = function(x) str_wrap(str_replace_all(x, "foo" , " "),width = 30)) + labs(x = "What is the average pay rate for junior data scientists?",y="") + theme(axis.text.x = element_text(angle=45, hjust=1)) 
 ``` 
 
@@ -703,9 +704,11 @@ This is in line with what we'd expect given other industry data.
 
 #Towards Data Science: Job Listings Scraping Discussion
 
-Note: The following analysis requires setup with this [script](Project3_Tables) to load the SQL tables, and is based on the article 
-["The Most in Demand Skills for Data Scientists"](https://towardsdatascience.com/the-most-in-demand-skills-for-data-scientists-4a4a8db896db).
+General Note: The following analysis requires setup with this <a href="https://raw.githubusercontent.com/msds-rep/DAM/master/Project3_Tables.sql" target="_blank">SQL sciopt</a>
+ to load the SQL tables, and is based on the article 
+<a href="http://towardsdatascience.com/the-most-in-demand-skills-for-data-scientists-4a4a8db896db" target="_blank">"The Most in Demand Skills for Data Scientists"</a>.
 
+Note for Alice's version: I could not get this code to load or knit from my machine. The graphs can be viewed on Eleanor's RPubs <a href="http://rpubs.com/eleanorromero/431553" target="_blank">here</a>.
 
 Connect to the database
 ```{r connect, echo=TRUE, error=TRUE}
@@ -804,8 +807,11 @@ Deepak Mongia - Kaggle Analysis 2, Graph Consistency Owner
 Jeff Littlejohn - Custom Survey Build & Analysis, Content Compilation
 
 
-## Reference
-https://towardsdatascience.com/the-most-in-demand-skills-for-data-scientists-4a4a8db896db
+## References
+<a href="https://hbr.org/2012/10/data-scientist-the-sexiest-job-of-the-21st-century" target="_blank">"article"Data Scientist: The Sexiest Job of the 21st Century."</a> <i>Harvard Business Review</i>
 
-https://www.kaggle.com/kaggle/kaggle-survey-2017
+<a href="https://towardsdatascience.com/the-most-in-demand-skills-for-data-scientists-4a4a8db896db" target="_blank">"The Most In-Demand Skills for Data Scientists"</a> <i>Towards Data Science</i>
+
+<a href="https://www.kaggle.com/kaggle/kaggle-survey-2017" target="_blank">Kaggle ML and Data Science Survey, 2017:
+A big picture view of the state of data science and machine learning.</a>
 
