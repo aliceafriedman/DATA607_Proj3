@@ -19,12 +19,12 @@ knitr::opts_chunk$set(echo = TRUE, error = TRUE)
 
 An October 2012 Harvard Business Review [article](https://hbr.org/2012/10/data-scientist-the-sexiest-job-of-the-21st-century) called Data Scientist the "sexiest job of the 21st century." In 21st-century time, 2012 is eons ago. Glassdoor, the popular career and company review site, has [named](https://www.kdnuggets.com/2018/01/glassdoor-data-scientist-best-job-america-3years.html) Data Scientist the best job in America for three years running. We hear tales of huge starting salaries and high demand for talent. Still, for a number of reasons, we're cautious.
 
-[![Sexy Job Time]](https://github.com/littlejohnjeff/DATA607_Project3/blob/master/sexy_data_scientist.png)
+![Sexy Job Time](sexy_data_scientist.png)
 
 First, data scientist jobs are prone to the catch-22 prevalent in many industries - all jobs seem to want a couple years of experience in the field. How do you get experience if there are no seemingly true entry-level jobs?
 
 Second, data science degree programs and boot camps are popping up faster the Chick-fil-A franchises. Berkeley's brand-new undergraduate Data Science program [received](https://data.berkeley.edu/news/uc-berkeleys-data-science-major-takes) nearly 800 major pre-declarations as soon as it was made available, which is unprecedented for a new academic program. (They have to use a giant lecture hall (below) for the first course in the sequence.) Competition for entry-level positions is already competitive and growing. It's going to get crazier.
-[![Big Classroom]](https://github.com/littlejohnjeff/DATA607_Project3/blob/master/data8-fall2018_0.jpg)
+![Big Classroom](data8-fall2018_0.jpg)
 
 Also, job listings have not evolved to reflect the growth in data science-specific graduate programs. Many open positions list wanting graduate degrees in statistics or specific areas of computer science or PhD degrees in quantitative areas, echoing the backgrounds of many early Data Science industry leaders. In larger companies, our resumes may not make it past HR to the hiring managers. 
 
@@ -57,87 +57,6 @@ library(plotly)
 
 \pagebreak
 
-#Towards Data Science: Job Listings Scraping Discussion
-
-Connect to the database
-```{r connect, echo=TRUE, error=TRUE}
-connection <- dbConnect(MySQL(),
-              user="",
-              password="",
-              dbname="test",
-              host="localhost"
-)
-```
-
-##Data Scientist Job Listing
-What are employers looking for?
-
-Methodology:
-
-For the first chart, we searched job listings on LinkedIn, Indeed, SimplyHired, Monster, and AngelList on October 16, 2018 and used the keyword data scientist. The chart below shows how many data scientist jobs each website listed.
-
-```{r Q3a, eval=TRUE, echo=TRUE, warning=FALSE, error=TRUE}
-qry_jobs <- "SELECT JobSites, Count as Listing FROM DS_JobList order by Count desc"
-
-query1 <- dbGetQuery(connection, qry_jobs)
-
-query1$JobSites <- factor(query1$JobSites, levels = unique(query1$JobSites)[order(query1$Listing, decreasing = TRUE)])
-
-p <- plot_ly(data = query1, y = ~Listing, x = ~JobSites,
-  name = "Data Scientist Job Listing",
-  type = "bar", marker = list(color = "red")
-)
-
-p
-```
-
-##General Skills
-The most frequent general data scientist skills the employers are looking for.
-
-Methodology:
-
-For the second and third chart, we used the author's provided data set in google sheet and loaded them in our MySQL database in a normalized format. We sum the keywords occurrences and averaged them across the job listing sites.
-
-
-```{r, Q3b, eval=TRUE, echo=TRUE, warning=FALSE, error=TRUE}
-
-qry_dsjobs <- "SELECT Keyword, sum(LinkedIn + Indeed + SimplyHired + Monster)/4 as Ave_Listing from DS_GenSkills group by Keyword"
-
-query <- dbGetQuery(connection, qry_dsjobs)
-
-query$Keyword <- factor(query$Keyword, levels = unique(query$Keyword)[order(query$Ave_Listing, decreasing = TRUE)])
-
-#knitr::kable(query)
-
-p <- plot_ly(data = query, y = ~Ave_Listing, x = ~Keyword,
-  name = "General Skills in Data Scientist Job Listing",
-  type = "bar", marker = list(color = "blue")
-)
-
-p
-```
-
-The chart shows that generally, employers are looking for data scientists who are very good if not proficient in analysis, machine learning and statistics just to name a few. Computer science background and communication completes the top 5 general skills requirements.
-
-## Technology Skills
-The top 20 specific languages, libraries, and tech tools employers are looking for data scientists to have experience with.
-    
-```{r, Q3c, eval=TRUE, echo=TRUE, warning=FALSE, error=TRUE}
-qry_dsts <- "SELECT Keyword, `Avg %` as Ave_Perc FROM DS_SoftSkills order by 2 desc limit 20"
-
-query2 <- dbGetQuery(connection, qry_dsts)
-
-query2$Keyword <- factor(query2$Keyword, levels = unique(query2$Keyword)[order(query2$Ave_Perc, decreasing = TRUE)])
-
-p <- plot_ly(data = query2, y = ~Ave_Perc, x = ~Keyword,
-  name = "Top 20 Technology Skills in Data Scientist Job Listing",
-  type = "bar", marker = list(color = "green")
-)
-
-p
-```
-
-Among these 20 top technology skills, Python and R are currently the most in-demand language, followed by SQL. Seeing all of these, we know that at CUNY SPS, we are learning the tools and acquiring the skills that are current and in-demand in the IT workplace.
 
 \pagebreak
 
@@ -780,13 +699,103 @@ ggplot(team_salary,aes(x=Answer)) + geom_bar(aes(fill = Answer)) + theme_light()
 
 This is in line with what we'd expect given other industry data.
 
+\pagbreak
+
+#Towards Data Science: Job Listings Scraping Discussion
+
+Note: The following analysis requires setup with this [script](Project3_Tables) to load the SQL tables, and is based on the article 
+["The Most in Demand Skills for Data Scientists"](https://towardsdatascience.com/the-most-in-demand-skills-for-data-scientists-4a4a8db896db).
+
+
+Connect to the database
+```{r connect, echo=TRUE, error=TRUE}
+connection <- dbConnect(MySQL(),
+              user="",
+              password="",
+              dbname="test",
+              host="localhost"
+)
+```
+
+##Data Scientist Job Listing
+What are employers looking for?
+
+###Methodology:
+
+For the first chart, we searched job listings on LinkedIn, Indeed, SimplyHired, Monster, and AngelList on October 16, 2018 and used the keyword data scientist. The chart below shows how many data scientist jobs each website listed.
+
+```{r Q3a, eval=TRUE, echo=TRUE, warning=FALSE, error=TRUE}
+qry_jobs <- "SELECT JobSites, Count as Listing FROM DS_JobList order by Count desc"
+
+query1 <- dbGetQuery(connection, qry_jobs)
+
+query1$JobSites <- factor(query1$JobSites, levels = unique(query1$JobSites)[order(query1$Listing, decreasing = TRUE)])
+
+p <- plot_ly(data = query1, y = ~Listing, x = ~JobSites,
+  name = "Data Scientist Job Listing",
+  type = "bar", marker = list(color = "red")
+)
+
+p
+```
+
+##General Skills
+The most frequent general data scientist skills the employers are looking for.
+
+###Methodology:
+
+For the second and third chart, we used the author's provided data set in google sheet and loaded them in our MySQL database in a normalized format. We sum the keywords occurrences and averaged them across the job listing sites.
+
+
+```{r, Q3b, eval=TRUE, echo=TRUE, warning=FALSE, error=TRUE}
+
+qry_dsjobs <- "SELECT Keyword, sum(LinkedIn + Indeed + SimplyHired + Monster)/4 as Ave_Listing from DS_GenSkills group by Keyword"
+
+query <- dbGetQuery(connection, qry_dsjobs)
+
+query$Keyword <- factor(query$Keyword, levels = unique(query$Keyword)[order(query$Ave_Listing, decreasing = TRUE)])
+
+#knitr::kable(query)
+
+p <- plot_ly(data = query, y = ~Ave_Listing, x = ~Keyword,
+  name = "General Skills in Data Scientist Job Listing",
+  type = "bar", marker = list(color = "blue")
+)
+
+p
+```
+
+The chart shows that generally, employers are looking for data scientists who are very good if not proficient in analysis, machine learning and statistics just to name a few. Computer science background and communication completes the top 5 general skills requirements.
+
+## Technology Skills
+The top 20 specific languages, libraries, and tech tools employers are looking for data scientists to have experience with.
+    
+```{r, Q3c, eval=TRUE, echo=TRUE, warning=FALSE, error=TRUE}
+qry_dsts <- "SELECT Keyword, `Avg %` as Ave_Perc FROM DS_SoftSkills order by 2 desc limit 20"
+
+query2 <- dbGetQuery(connection, qry_dsts)
+
+query2$Keyword <- factor(query2$Keyword, levels = unique(query2$Keyword)[order(query2$Ave_Perc, decreasing = TRUE)])
+
+p <- plot_ly(data = query2, y = ~Ave_Perc, x = ~Keyword,
+  name = "Top 20 Technology Skills in Data Scientist Job Listing",
+  type = "bar", marker = list(color = "green")
+)
+
+p
+```
+
+Among these 20 top technology skills, Python and R are currently the most in-demand language, followed by SQL. Seeing all of these, we know that at CUNY SPS, we are learning the tools and acquiring the skills that are current and in-demand in the IT workplace.
+
+\pagebreak
+
 #Conclusion
 
 We see numerous possibilities for further exploration. A deeper look at the dearth of entry-level data science positions. Perhaps we could even use a combination of web scraping and machine learning to identify entry-level positions automatically. Additionally, a survey of recent graduates of the CUNY program would be of much interest. 
 
 ##Credits
 
-Eleanor Romero - Job Listings Article Discussion, Presentation Slides
+Eleanor Romero - Towards Data Science Section, Presentation Slides
 
 Alice Friedman - Kaggle Analysis 1, Technical Compilation, Presenter
 
