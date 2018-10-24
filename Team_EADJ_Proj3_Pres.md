@@ -17,7 +17,7 @@ Data Sources
   - Sample: 16,000 data science practitioners
 
 2. Custom survey, analytics employers' self-reported hiring needs
-  - Sample: Distributed to analytics employers we know using <a href="https://www.surveymonkey.co.uk/r/2GZWJQ6" target="_blank">Survey Monkey</a>, XX responses
+  - Sample: Distributed to analytics employers we know using <a href="https://www.surveymonkey.co.uk/r/2GZWJQ6" target="_blank">Survey Monkey</a>, 15 requests, only 6 responses returned
 
 3. Published table of terms found in "data scientist" job listings 
   - Sample: Web-scraping & analysis of ~ 15,000 job listings online <a href="https://www.kaggle.com/discdiver/the-most-in-demand-skills-for-data-scientists/" target="_blank">published</a> by author Jeff Hale
