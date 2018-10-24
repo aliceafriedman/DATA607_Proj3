@@ -1,5 +1,10 @@
+<style>
+.small-code pre code {
+  font-size: 1em;
+}
+</style>
 
-What are the most important data science skills?
+The most important data science skills
 ========================================================
 author: Data 607 Project 3, Team EADJ
 date: October 25, 2018
@@ -19,6 +24,8 @@ Data Sources
 
 1.1 Kaggle, Data Wrangling
 ========================================================
+class:small-code
+
 Very tidy data
 
 
@@ -261,6 +268,7 @@ $ JobFactorPublishingOpportunity              <fct> , , Very Important...
 
 1.1 Kaggle, Data Cleaning
 ========================================================
+class:small-code
 Example of data cleaning required
 
 ```r
@@ -279,7 +287,8 @@ quantile(USD$CompensationAmount, na.rm = TRUE)
 
 2.1 Custom Survey, Data Wrangling
 ========================================================
-
+class:small-code
+Adding levels to make unused survey options appear in graphs
 
 ```r
 #limit data to question 5; drop levels removes unused factors - which are responses to to other questions - will be important later
@@ -307,7 +316,9 @@ levels(team_skills$Answer) <- c(levels(team_skills$Answer),
 
 3.1 Job Listings, Data Wrangling
 ========================================================
+class:small-code
 Manually entered results of internet search into SQL script to creat table
+
 ```
 DROP TABLE IF EXISTS `DS_GenSkills`;
 
@@ -345,15 +356,21 @@ UNLOCK TABLES;
 
 3.2 Job Listings, Key Findings
 ========================================================
+  
 Python, R, and SQL are all top skills in job postings!
 
+![newplot](newplot.png)
 
-4. Conclusion: Lessons Learned
+
+4. Conclusion
 ========================================================
 
+Lessons Learned
 
 1. Challenges of using MySQL for reproducibility
 
 2. Importance of learning Git for easy collarboration
 
 3. Even tidy-looking data may require a lot of wrangling before performing meaningful analysis!
+
+![Data Scientist](sexy_data_scientist.png)

@@ -646,6 +646,7 @@ team_skills <- df_dfs %>% filter(df_dfs$Question.No. == 5) %>% droplevels()
 levels(team_skills$Answer) <- c(levels(team_skills$Answer),"R","Java","Data wrangling", "Unstructured data", "Natural language processing", "Optimization", "Graphical models", "Privacy and ethics", "Other soft skills", "Other (please specify)")
 #create an order to show the factors in logical manner
 positions5 <- c("Data wrangling", "Graphical models", "Hadoop;Map/Reduce", "Java", "Machine learning", "Natural language processing", "Optimization","Other (please specify)", "Other soft skills", "Presentation skills", "Privacy and ethics", "Project management", "Python", "R",  "Research design", "SQL", "Statistical modeling", "Unstructured data")
+
 #including answers with no responses and adjusting axis in a few ways 
 team_skills %>% within(Answer <- factor(Answer, levels = names(sort(table(Answer), decreasing = TRUE)))) %>% ggplot(aes(x=Answer)) + geom_bar(aes(fill = Answer)) + theme(axis.text.x = element_text(angle=45, hjust=1)) + labs(title = "Top wanted skills")
 ``` 
