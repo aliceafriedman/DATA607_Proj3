@@ -1,0 +1,217 @@
+
+What are the most important data science skills?
+========================================================
+author: Data 607 Project 3, Team EADJ
+date: October 25, 2018
+autosize: true
+
+Data Sources
+========================================================
+
+1. <a href="https://www.kaggle.com/kaggle/kaggle-survey-2017" target="_blank">Kaggle survey</a> (2017), how practitioners work</strong>
+  - Sample: 16,000 data science practitioners
+
+2. Custom survey, analytics employers' self-reported hiring needs
+  - Sample: Distributed to analytics employers we know using <a href="https://www.surveymonkey.co.uk/r/2GZWJQ6" target="_blank">Survey Monkey</a>, XX responses
+
+3. Published table of terms found in "data scientist" job listings 
+  - Sample: Web-scraping & analysis of ~ 15,000 job listings online <a href="https://www.kaggle.com/discdiver/the-most-in-demand-skills-for-data-scientists/" target="_blank">published</a> by author Jeff Hale
+
+1.1 Kaggle, Data Wrangling
+========================================================
+Very tidy data
+```{r, include=FALSE, message=FALSE}
+Kaggle.Multi <- read.csv("https://raw.githubusercontent.com/aliceafriedman/DATA607_Proj3/master/multipleChoiceResponses.csv", sep=",", header = TRUE)
+library(dplyr)
+library(kableExtra)
+library(tidyr)
+library(forcats)
+library(ggplot2)
+```
+```{r}
+glimpse(Kaggle.Multi)
+```
+
+1.1 Kaggle, Data Cleaning
+========================================================
+Example of data cleaning required
+```{r, eval=FALSE}
+#Limit numeric responses to USD, remove outliers
+USD <- Kaggle.Multi %>% 
+  mutate(CompensationAmount = as.numeric(as.numeric(levels(CompensationAmount)[CompensationAmount])),
+         CompensationAmount = ifelse(CompensationAmount < 100, CompensationAmount*1000, CompensationAmount)) %>%  
+  filter(CompensationCurrency=="USD",
+         CompensationAmount < 9999999) 
+quantile(USD$CompensationAmount, na.rm = TRUE)
+```
+1.2 Kaggle, Key Findings
+========================================================
+```{r, include=FALSE}
+#Filter USD responses
+USD <- Kaggle.Multi %>% 
+  mutate(CompensationAmount = as.numeric(as.numeric(levels(CompensationAmount)[CompensationAmount])),
+         CompensationAmount = ifelse(CompensationAmount < 100, CompensationAmount*1000, CompensationAmount)) %>%  
+  filter(CompensationCurrency=="USD",
+         CompensationAmount < 9999999) 
+quantile(USD$CompensationAmount, na.rm = TRUE)
+
+#Create levels using cut()
+USD <- USD %>% select(  
+  TimeGatheringData,
+  TimeModelBuilding,
+  TimeProduction,
+  TimeVisualizing,
+  TimeFindingInsights,
+  TimeOtherSelect,
+  CompensationAmount) %>% 
+  mutate(IncomeLevel = cut(x=CompensationAmount, breaks = c(0, 60000, 96000, 137500, 2500000))) 
+levels(USD$IncomeLevel) <- c("Low", "Medium", "High", "Very_high")
+
+timeSpentByUSDSalary <- USD %>% 
+  rename(
+  'Gathering Data' = TimeGatheringData,
+  'Modeling' = TimeModelBuilding,
+  'Production' = TimeProduction,
+  'Visualizing' = TimeVisualizing,
+  'Finding Insights' = TimeFindingInsights,
+  'Other' = TimeOtherSelect) %>% 
+  gather(key="Skill", value="PercTimeSpent", -CompensationAmount, -IncomeLevel, na.rm = TRUE) 
+
+```
+```{r, echo=FALSE}
+timeSpentByUSDSalary %>%
+  filter(!is.na(IncomeLevel)) %>% 
+  group_by(Skill, IncomeLevel) %>% 
+  summarise(AvgPercTimeSpent=mean(PercTimeSpent)) %>% 
+  ggplot(aes(x=Skill, y=AvgPercTimeSpent, fill=IncomeLevel)) +
+  geom_col(position="dodge")+
+  ggtitle("How does time spent vary by salary?")+
+  theme(text = element_text(size=20), axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+
+```
+
+2.1 Custom Survey, Data Wrangling
+========================================================
+```{r, include=FALSE}
+df_dfs <- tbl_df(read.csv("https://raw.githubusercontent.com/littlejohnjeff/DATA607_Project3/master/Data%20Science%20Skills%20Survey%20Monkey%20Responses_20181017.csv"))
+
+team_size <- df_dfs %>% filter(df_dfs$Question.No. == 1) %>% droplevels()
+
+#add unused answers
+levels(team_size$Answer) <- c(levels(team_size$Answer),"1-2","11-20","21+")
+#check that the desired levels were added
+levels(team_size$Answer) 
+
+#create an order to show the factors in logical manner
+positions <- c('1-2', "3-5", '6-10', '11-20', '21+')
+
+#limit data to question 2; drop levels removes unused factors - which are responses to to other questions - will be important later
+team_roles <- df_dfs %>% filter(df_dfs$Question.No. == 2) %>% droplevels()
+#add unused answers
+levels(team_roles$Answer) <- c(levels(team_roles$Answer),"Other")
+#create an order to show the factors in logical manner
+positions2 <- c('No, everyone is versatile', "Kinda, some people are better at things than others and we utilize our strengths", 'Yes, some of our team members specialize in data engineering and others in data science',"Other")
+
+#limit data to question 3; drop levels removes unused factors - which are responses to to other questions - will be important later
+team_location <- df_dfs %>% filter(df_dfs$Question.No. == 3) %>% droplevels()
+
+team_growth <- df_dfs %>% filter(df_dfs$Question.No. == 4) %>% droplevels()
+#add unused answers
+levels(team_growth$Answer) <- c(levels(team_growth$Answer),"No growth - or negative growth","More than double")
+#create an order to show the factors in logical manner
+positions4 <- c("No growth - or negative growth", "1-25%",'25-50%',"50-100%","More than double")
+#including answers with no responses and adjusting axis in a few ways 
+```
+```{r, eval=FALSE}
+#limit data to question 5; drop levels removes unused factors - which are responses to to other questions - will be important later
+team_skills <- df_dfs %>%
+  filter(df_dfs$Question.No. == 5) %>%
+  droplevels()
+
+#add unused answers
+levels(team_skills$Answer) <- c(levels(team_skills$Answer),
+  "R",
+  "Java",
+  "Data wrangling", 
+  "Unstructured data", 
+  "Natural language processing", 
+  "Optimization", 
+  "Graphical models", 
+  "Privacy and ethics", 
+  "Other soft skills", 
+  "Other (please specify)")
+```
+
+2.2 Custom Survey, Key Findings
+========================================================
+```{r, echo=FALSE}
+#limit data to question 5; drop levels removes unused factors - which are responses to to other questions - will be important later
+team_skills <- df_dfs %>% filter(df_dfs$Question.No. == 5) %>% droplevels()
+#add unused answers
+levels(team_skills$Answer) <- c(levels(team_skills$Answer),"R","Java","Data wrangling", "Unstructured data", "Natural language processing", "Optimization", "Graphical models", "Privacy and ethics", "Other soft skills", "Other (please specify)")
+#create an order to show the factors in logical manner
+positions5 <- c("Data wrangling", "Graphical models", "Hadoop;Map/Reduce", "Java", "Machine learning", "Natural language processing", "Optimization","Other (please specify)", "Other soft skills", "Presentation skills", "Privacy and ethics", "Project management", "Python", "R",  "Research design", "SQL", "Statistical modeling", "Unstructured data")
+
+#including answers with no responses and adjusting axis in a few ways 
+team_skills %>% 
+  within(Answer <- factor(Answer, levels = names(sort(table(Answer), decreasing = TRUE)))) %>% 
+  ggplot(aes(x=Answer)) + 
+  geom_bar(aes(fill = Answer)) +
+  theme(legend.position="none",
+        text = element_text(size=20),
+        axis.text.x = element_text(angle=60, hjust=1)) + 
+  labs(title = "Top wanted skills")
+```
+
+3.1 Job Listings, Data Wrangling
+========================================================
+Manually entered results of internet search into SQL script to creat table
+```
+DROP TABLE IF EXISTS `DS_GenSkills`;
+
+CREATE TABLE `DS_GenSkills` (
+  `Keyword` varchar(50) DEFAULT NULL,
+  `LinkedIn` int(11) DEFAULT NULL,
+  `Indeed` int(11) DEFAULT NULL,
+  `SimplyHired` int(11) DEFAULT NULL,
+  `Monster` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `DS_GenSkills` WRITE;
+/*!40000 ALTER TABLE `DS_GenSkills` DISABLE KEYS */;
+
+INSERT INTO `DS_GenSkills` (`Keyword`, `LinkedIn`, `Indeed`, `SimplyHired`, `Monster`)
+VALUES
+	('machine learning',5701,3439,2561,2340),
+	('analysis',5168,3500,2668,3306),
+	('statistics',4893,2992,2308,2399),
+	('computer science',4517,2739,2093,1900),
+	('communication',3404,2344,1791,2053),
+	('mathematics',2605,1961,1497,1815),
+	('visualization',1879,1413,1153,1207),
+	('AI composite',1568,1125,811,687),
+	('deep learning',1310,979,675,606),
+	('NLP composite',1212,910,660,582),
+	('software development',732,627,481,784),
+	('neural networks',671,485,421,305),
+	('project management',476,397,330,348),
+	('software engineering',413,295,250,512);
+
+/*!40000 ALTER TABLE `DS_GenSkills` ENABLE KEYS */;
+UNLOCK TABLES;
+```
+
+3.2 Job Listings, Key Findings
+========================================================
+Python, R, and SQL are all top skills in job postings!
+
+
+4. Conclusion: Lessons Learned
+========================================================
+
+
+1. Challenges of using MySQL for reproducibility
+
+2. Importance of learning Git for easy collarboration
+
+3. Even tidy-looking data may require a lot of wrangling before performing meaningful analysis!
